@@ -1,6 +1,6 @@
 # Market Data API Observability Platform
 
-A real-time stock market data API with built-in monitoring capabilities. Built with FastAPI for high-performance endpoints, Prometheus for metrics collection, and Grafana for visualization dashboards. Uses Docker Compose for easy deployment and runs each service in Docker containers.
+A real-time observability platform that monitors and analyzes requests to the YFinance API. Built with FastAPI, using Prometheus for metrics collection and querying, and Grafana dashboards for visualization. Each service runs in its own Docker container for easy deployment and scaling.
 
 ## Features
 - Real-time and historical stock data via YFinance
@@ -96,8 +96,16 @@ First, let's test some requests to our FastAPI server:
 curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl http://localhost:8000/stock/MSFT/price | jq '.' && echo -e "\n" && curl http://localhost:8000/stock/GOOGL/historical | jq '.'
 ```
 
-Response from endpoints:
+Then check these queries in Prometheus:
+```promql
+# Query 1: Total requests by endpoint
+market_data_requests_total
 
+# Query 2: Requests by stock symbol
+stock_symbol_requests_total
+```
+
+Response from endpoints:
 <img width="635" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
 
 Shows the price data for AAPL and MSFT, and historical data for GOOGL with customizable time intervals.
@@ -110,8 +118,6 @@ curl http://localhost:8000/metrics | grep market_data_requests_total
 ```
 
 <img width="628" alt="endpoints_hits" src="https://github.com/user-attachments/assets/6737eb6f-2e83-48a7-b45c-da063f4a6cec" />
-
-Shows how many times each endpoint was called since the server started. In this case, we see two price endpoint hits (AAPL, MSFT) and one historical data request (GOOGL).
 
 ### Prometheus Metrics Visualization
 
@@ -178,3 +184,4 @@ Shows how many times each stock (AAPL, GOOGL, MSFT) was queried over time.
 MIT License - do whatever you want with this!
 
 
+x

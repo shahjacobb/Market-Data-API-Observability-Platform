@@ -59,6 +59,17 @@ curl http://localhost:8000/stock/AAPL/dividends | jq '.'
 curl http://localhost:8000/stock/AAPL/earnings | jq '.'
 ```
 
+### Testing Endpoints
+First, let's test some requests:
+```bash
+curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl http://localhost:8000/stock/MSFT/price | jq '.' && echo -e "\n" && curl http://localhost:8000/stock/GOOGL/historical | jq '.'
+```
+
+Response from endpoints:
+<img width="635" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
+
+Shows the price data for AAPL and MSFT, and historical data for GOOGL with customizable time intervals.
+
 ### Metrics Implementation
 FastAPI exposes these Prometheus metrics at `/metrics`:
 - Request counts by endpoint
@@ -78,8 +89,8 @@ Prometheus needs Docker to scrape metrics. Here's how to get both services runni
 docker-compose up -d
 ```
 
-You should see something like this (services starting up):
-<img width="1000" alt="docker_startup_logs" src="https://github.com/user-attachments/assets/docker_startup_logs.png" />
+You should see something like this (Docker images being built and containers running):
+<img width="703" alt="docker_container_startup_logs" src="https://github.com/user-attachments/assets/f68ba7b3-87e1-4860-bc22-89c7d6c4a8db" />
 
 The logs show containers building and Prometheus starting to scrape metrics (those 200 OK responses from /metrics endpoint).
 
@@ -98,7 +109,7 @@ market_data_requests_total
 ```
 
 Total requests by endpoint:
-<img width="1000" alt="market_data_requests_prom" src="https://github.com/user-attachments/assets/market_data_requests_prom.png" />
+<img width="1454" alt="market_request_data_prom" src="https://github.com/user-attachments/assets/60d22cb5-e07e-4109-8c53-b5864029cd00" />
 
 The graph breaks down API usage - you can see the mix of price lookups, historical data pulls, and info requests.
 
@@ -110,38 +121,35 @@ stock_symbol_requests_total
 ```
 
 Request count by symbol:
-<img width="1000" alt="symbol_requests_prom" src="https://github.com/user-attachments/assets/symbol_requests_prom.png" />
+<img width="1451" alt="ticker_requests_counter_prom" src="https://github.com/user-attachments/assets/603e1e28-0c86-4615-b668-1053b490bfd2" />
 
 Shows request volume per stock symbol over time (AAPL, GOOGL, MSFT).
 
 ### Development Status
-#### ✅ Done
+#### Done
 - [x] YFinance API Integration
   - [x] Real-time price endpoint
   - [x] Historical data endpoint
   - [x] Company info endpoint
   - [x] Dividend data endpoint
   - [x] Earnings data endpoint
-- [x] Prometheus Metrics
+- [x] docker
+  - [x] FastAPI container
+  - [x] Prometheus container
+  - [x] Docker Compose setup
+- [x] prometheus metrics
   - [x] Request counting
   - [x] Latency tracking
   - [x] Error monitoring
-  - [x] YFinance call success rate
 
 #### In Progress
-- JSON serialization for complex data types (numpy/pandas)
-- Type conversion implementation:
-  - Date formatting in historical data
-  - Strike prices in options chain
-  - Dividend history formatting
-  - Earnings data number formatting
+**prometheus stuff**
+  - [x] yfinance call success rate
+  - [ ] response status tracking
+  - [ ] yfinance error response details
 
-#### Planned Features
-- Docker containerization
-- Grafana dashboard setup
-- Additional endpoints:
-  - Batch Stock Data (`/stocks/batch`)
-  - Options Chain (`/stock/{ticker}/options`)
+**grafana**
+- [ ] literally all of grafana
 
 ## Requirements
 - Python 3.9 or newer

@@ -66,7 +66,8 @@ curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl htt
 ```
 
 Response from endpoints:
-<img width="635" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
+
+<img width="650" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
 
 Shows the price data for AAPL and MSFT, and historical data for GOOGL with customizable time intervals.
 

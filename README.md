@@ -98,6 +98,8 @@ Services will be at:
 - FastAPI: http://localhost:8000
 - Prometheus: http://localhost:9090
 
+## Using Services
+
 ### Using Prometheus
 With our Docker containers running, you can now query the metrics in Prometheus. Here's what we're tracking:
 

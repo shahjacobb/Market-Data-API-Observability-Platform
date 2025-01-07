@@ -1,6 +1,6 @@
 # Market Data API Observability Platform
 
-A real-time observability platform that monitors and analyzes requests to the YFinance API. Built with FastAPI, using Prometheus for metrics collection and querying, and Grafana dashboards for visualization. Each service runs in its own Docker container for easy deployment and scaling.
+A real-time observability platform that monitors and analyzes requests to the YFinance API. Built with FastAPI, Prometheus for metrics collection and querying, and Grafana dashboards for visualization. Each service runs in its own Docker container for easy deployment and scaling using [Docker Compose](https://docs.docker.com/compose/).
 
 ## Features
 - Real-time and historical stock data via YFinance
@@ -18,7 +18,7 @@ Run FastAPI locally:
 3. API runs at http://localhost:8000
 
 ### Working Endpoints
-Install jq to format the JSON output:
+You can install jq first to pretty print format the JSON output:
 ```bash
 brew install jq  # on macOS
 ```
@@ -69,20 +69,19 @@ Response from endpoints:
 
 <img width="650" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
 
-Shows the price data for AAPL and MSFT, and historical data for GOOGL with customizable time intervals.
+Shows the price data for AAPL and MSFT, and historical data for GOOGL (with customizable time intervals).
 
 ### Metrics Implementation
-FastAPI exposes these Prometheus metrics at `/metrics`:
+FastAPI exposes these Prometheus metrics at `[/metrics](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/src/metrics.py)`:
 - Request counts by endpoint
 - Request latency measurements
 - Stock symbol request frequency
-- Error tracking by type
 - Stock price fetch latency
 - Successful vs failed YFinance calls
 - Number of unique symbols requested
 
 ### Docker & Prometheus Setup
-Prometheus needs Docker to scrape metrics. Here's how to get both services running:
+Okay, so testing the FastAPI service can be done by just running `uvicorn`, but in order to test Prometheus and start querying, it needs a Docker container running. Here's how to get both services running together using Docker Compose:
 
 1. Start Docker Desktop
 2. Run the services:

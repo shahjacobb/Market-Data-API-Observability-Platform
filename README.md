@@ -101,7 +101,7 @@ Services will be at:
 ## Using Services
 
 ### Using Prometheus
-With our Docker containers running, you can now query the metrics in Prometheus. Here's what we're tracking:
+With our Docker containers running, you can start querying metrics using the Prometheus web UI (using port 9090 above). Here's what we're tracking:
 
 #### 1. API Traffic Patterns
 Check requests across endpoints:

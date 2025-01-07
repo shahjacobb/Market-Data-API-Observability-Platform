@@ -9,7 +9,7 @@ A real-time observability platform that monitors and analyzes requests to the YF
 - Grafana dashboards for data visualization
 - Containerized architecture with Docker
 
-## Current Implementation
+## Current Implementation and Local Setup Instructions
 
 ### API Setup
 Run FastAPI locally:

@@ -125,13 +125,15 @@ async def get_earnings_data(
 ):
     """Get company earnings data"""
     try:
-        stock = yf.Ticker(ticker)
-        earnings = stock.get_earnings(freq=frequency)
-        return {
-            "ticker": ticker,
-            "frequency": frequency,
-            "earnings_data": earnings.to_dict() if not earnings.empty else {}
-        }
+        track_symbol_request(ticker)
+        with YFINANCE_CALLS.labels(operation='get_earnings').time():
+            stock = yf.Ticker(ticker)
+            earnings = stock.get_earnings(freq=frequency)
+            return {
+                "ticker": ticker,
+                "frequency": frequency,
+                "earnings_data": earnings.to_dict() if not earnings.empty else {}
+            }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

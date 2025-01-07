@@ -11,19 +11,19 @@ A real-time observability platform that monitors and analyzes requests to the YF
 
 ## Current Implementation
 
-### API Server Setup
-To test the endpoints:
+### API Setup
+Run FastAPI locally:
 1. `cd backend/`
-2. Start the server: `uvicorn src.main:app --reload`
-3. The API will be available at `http://localhost:8000`
+2. `uvicorn src.main:app --reload`
+3. API runs at http://localhost:8000
 
 ### Working Endpoints
-If you're trying to test these endpoints with curl, download jq to pretty print the JSON responses:
+Install jq to format the JSON output:
 ```bash
 brew install jq  # on macOS
 ```
 
-Note: all endpoints are case sensitive - use uppercase tickers (AAPL not aapl)
+Use uppercase tickers (AAPL not aapl) for all endpoints:
 
 1. **Health Check**
 ```bash
@@ -60,7 +60,7 @@ curl http://localhost:8000/stock/AAPL/earnings | jq '.'
 ```
 
 ### Metrics Implementation
-The API includes Prometheus metrics to track performance:
+FastAPI exposes these Prometheus metrics at `/metrics`:
 - Request counts by endpoint
 - Request latency measurements
 - Stock symbol request frequency
@@ -69,62 +69,29 @@ The API includes Prometheus metrics to track performance:
 - Successful vs failed YFinance calls
 - Number of unique symbols requested
 
-Access metrics at `/metrics` endpoint for Prometheus scraping.
+### Docker & Prometheus Setup
+Prometheus needs Docker to scrape metrics. Here's how to get both services running:
 
-### Setting Up Prometheus
-If the Docker engine isn't running in the app, you won't be able to access Prometheus locally to run queries. Here's what you need to do:
-
-1. Open Docker Desktop and wait for it to start up
-2. Fire up the FastAPI server:
-```bash
-cd backend
-uvicorn src.main:app --reload
-```
-3. Start Prometheus using Docker Compose:
+1. Start Docker Desktop
+2. Run the services:
 ```bash
 docker-compose up -d
 ```
 
-Once everything's running, you can access:
-- FastAPI at http://localhost:8000
-- Prometheus at http://localhost:9090 (this is where you'll run your queries)
+You should see something like this (services starting up):
+<img width="1000" alt="docker_startup_logs" src="https://github.com/user-attachments/assets/docker_startup_logs.png" />
 
-### Testing Metrics Output
+The logs show containers building and Prometheus starting to scrape metrics (those 200 OK responses from /metrics endpoint).
 
-First, let's test some requests to our FastAPI server:
-```bash
-curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl http://localhost:8000/stock/MSFT/price | jq '.' && echo -e "\n" && curl http://localhost:8000/stock/GOOGL/historical | jq '.'
-```
+Services will be at:
+- FastAPI: http://localhost:8000
+- Prometheus: http://localhost:9090
 
-Then check these queries in Prometheus:
-```promql
-# Query 1: Total requests by endpoint
-market_data_requests_total
-
-# Query 2: Requests by stock symbol
-stock_symbol_requests_total
-```
-
-Response from endpoints:
-<img width="635" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
-
-Shows the price data for AAPL and MSFT, and historical data for GOOGL with customizable time intervals.
-
-Here's the metrics these requests generated:
-
-#### Endpoint Hit Counter
-```bash
-curl http://localhost:8000/metrics | grep market_data_requests_total
-```
-
-<img width="628" alt="endpoints_hits" src="https://github.com/user-attachments/assets/6737eb6f-2e83-48a7-b45c-da063f4a6cec" />
-
-### Prometheus Metrics Visualization
-
-Here's what we're tracking in Prometheus:
+### Using Prometheus
+With our Docker containers running, you can now query the metrics in Prometheus. Here's what we're tracking:
 
 #### 1. API Traffic Patterns
-Looking at how requests are spread across endpoints:
+Check requests across endpoints:
 ```promql
 # Total requests by endpoint
 market_data_requests_total
@@ -136,7 +103,7 @@ Total requests by endpoint:
 The graph breaks down API usage - you can see the mix of price lookups, historical data pulls, and info requests.
 
 #### 2. Stock Symbol Analytics
-Tracking which stocks people are looking up:
+See which stocks are being queried:
 ```promql
 # Requests per symbol
 stock_symbol_requests_total
@@ -145,7 +112,7 @@ stock_symbol_requests_total
 Request count by symbol:
 <img width="1000" alt="symbol_requests_prom" src="https://github.com/user-attachments/assets/symbol_requests_prom.png" />
 
-Shows how many times each stock (AAPL, GOOGL, MSFT) was queried over time.
+Shows request volume per stock symbol over time (AAPL, GOOGL, MSFT).
 
 ### Development Status
 #### ✅ Done
@@ -182,6 +149,3 @@ Shows how many times each stock (AAPL, GOOGL, MSFT) was queried over time.
 
 ## License
 MIT License - do whatever you want with this!
-
-
-x

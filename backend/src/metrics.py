@@ -19,9 +19,8 @@ REQUEST_COUNT = Counter(
     ['endpoint']  # labels let us break down metrics by different dimensions
 )
 
-# latency tracking - stores request times in buckets to see performance distribution
 REQUEST_LATENCY = Histogram(
-    'market_data_request_latency_seconds',
+    'request_latency_seconds',
     'Request latency in seconds',
     ['endpoint']
 )
@@ -46,6 +45,7 @@ ERROR_COUNT = Counter(
     'Total number of errors by type',
     ['error_type']  # python exception names
 )
+
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
     """middleware that handles request metrics and error tracking.

@@ -6,28 +6,34 @@ A real-time observability platform that monitors and analyzes requests to the YF
 - Real-time and historical stock data via YFinance
 - Prometheus metrics for monitoring API performance
 - FastAPI backend with built-in API docs
-- Grafana dashboards for data visualization
+- ~~Grafana dashboards for data visualization~~ wrapping up  
 - Containerized architecture with Docker
 
 ## Current Implementation and Local Setup Instructions
+
+Since each service (the fastAPI server responsible for making requests to yfinance api, and the prometheus service responsible for scraping metrics used for monitoring querying) is deployed as a Docker container, you need to build both containers using Docker Compose. 
+
 ### Running FastAPI and Prometheus Together
 1. Start Docker Desktop
-2. Navigate to the backend directory and run both services:
+2. Navigate to the `backend/` from root:
+
+And then runL
 ```bash
-cd backend/
 docker-compose up --build
 ```
 
-You should see something like this:
+This will build Docker images for both images and start containers for both services. Once you run that, you should see an output like this:
 
 <img width="703" alt="docker_compose_build_output" src="screenshots/docker_compose_build_output.png" />
 
-The logs show both containers starting up successfully. Once they're running, the services will be available at:
+The outputs logs just show the build process of both containers. `api-1` and `prometheus-1` refers to each, and 'attached' means they're both running (you can see that because it says `uvicorn` is running to listen to requests for made to our FastAPI server at the top for `api-1`, and the `Server is ready to recieve web requests` for `prom-1` at the bottom).
+
 - FastAPI: http://localhost:8000
 - Prometheus: http://localhost:9090
 
 ### Creating API Traffic for Prometheus Metrics
-I wrote a script to generate some traffic for the FastAPI service to hammer the YFinance API by sending a bunch of curl requests. [Run this locally after both containers are running](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/endpoints_testing.sh)
+
+To see this in action, use this bash script I wrote to generate some traffic hammer the YFinance API by with a bunch of curl requests. [Run this locally after both containers are running](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/endpoints_testing.sh)
 
 Since both services are running, Prometheus will just automatically scrape the instrumented metrics from these requests at 5 second intervals.
 

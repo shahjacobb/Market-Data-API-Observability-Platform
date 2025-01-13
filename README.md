@@ -81,6 +81,7 @@ curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl htt
 ```
 
 Response from endpoints:
+
 <img width="650" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
 
 Shows the price data for AAPL and MSFT, and historical data for GOOGL (with customizable time intervals).
@@ -105,7 +106,7 @@ market_data_requests_total
 ```
 
 Total requests by endpoint:
-<img width="1454" alt="market_request_data_prom" src="https://github.com/user-attachments/assets/60d22cb5-e07e-4109-8c53-b5864029cd00" />
+<img width="1454" alt="market_request_data_prom" src="screenshots/market_request_data_prom.png" />
 
 The graph breaks down API usage - you can see the mix of price lookups, historical data pulls, and info requests.
 
@@ -117,7 +118,8 @@ stock_symbol_requests_total
 ```
 
 Request count by symbol:
-<img width="1451" alt="ticker_requests_counter_prom" src="https://github.com/user-attachments/assets/603e1e28-0c86-4615-b668-1053b490bfd2" />
+
+<img width="1400" alt="ticker_requests_counter_prom" src="screenshots/ticker_requests_counter_prom.png" />
 
 Shows request volume per stock symbol over time (AAPL, GOOGL, MSFT).
 

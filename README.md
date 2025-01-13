@@ -10,12 +10,27 @@ A real-time observability platform that monitors and analyzes requests to the YF
 - Containerized architecture with Docker
 
 ## Current Implementation and Local Setup Instructions
+### Running FastAPI and Prometheus Together
+1. Start Docker Desktop
+2. Navigate to the backend directory and run both services:
+```bash
+cd backend/
+docker-compose up --build
+```
 
-### API Setup
-Run FastAPI locally:
-1. `cd backend/`
-2. `uvicorn src.main:app --reload`
-3. API runs at http://localhost:8000
+You should see something like this:
+
+<img width="703" alt="docker_compose_build_output" src="screenshots/docker_compose_build_output.png" />
+
+The logs show both containers starting up successfully. Once they're running, the services will be available at:
+- FastAPI: http://localhost:8000
+- Prometheus: http://localhost:9090
+
+### Creating API Traffic for Prometheus Metrics
+I wrote a script to generate some traffic for the FastAPI service to hammer the YFinance API by sending a bunch of curl requests. [Run this locally after both containers are running](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/endpoints_testing.sh)
+
+Since both services are running, Prometheus will just automatically scrape the instrumented metrics from these requests at 5 second intervals.
+
 
 ### Working Endpoints
 You can install jq first to pretty print format the JSON output:
@@ -66,13 +81,12 @@ curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl htt
 ```
 
 Response from endpoints:
-
 <img width="650" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
 
 Shows the price data for AAPL and MSFT, and historical data for GOOGL (with customizable time intervals).
 
 ### Metrics Implementation
-FastAPI exposes these Prometheus metrics at `[/metrics](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/src/metrics.py)`:
+FastAPI exposes these Prometheus metrics at `/metrics`:
 - Request counts by endpoint
 - Request latency measurements
 - Stock symbol request frequency
@@ -80,28 +94,8 @@ FastAPI exposes these Prometheus metrics at `[/metrics](https://github.com/shahj
 - Successful vs failed YFinance calls
 - Number of unique symbols requested
 
-### Docker & Prometheus Setup
-Okay, so testing the FastAPI service can be done by just running `uvicorn`, but in order to test Prometheus and start querying, it needs a Docker container running. Here's how to get both services running together using Docker Compose:
-
-1. Start Docker Desktop
-2. Run the services:
-```bash
-docker-compose up -d
-```
-
-You should see something like this (Docker images being built and containers running):
-<img width="703" alt="docker_container_startup_logs" src="https://github.com/user-attachments/assets/f68ba7b3-87e1-4860-bc22-89c7d6c4a8db" />
-
-The logs show containers building and Prometheus starting to scrape metrics (those 200 OK responses from /metrics endpoint).
-
-Services will be at:
-- FastAPI: http://localhost:8000
-- Prometheus: http://localhost:9090
-
-## Using Services
-
 ### Using Prometheus
-With our Docker containers running, you can start querying metrics using the Prometheus web UI (using port 9090 above). Here's what we're tracking:
+With our Docker containers running, you can start querying metrics using the Prometheus web UI at port 9090. Here's what we're tracking:
 
 #### 1. API Traffic Patterns
 Check requests across endpoints:
@@ -143,12 +137,12 @@ Shows request volume per stock symbol over time (AAPL, GOOGL, MSFT).
   - [x] Request counting
   - [x] Latency tracking
   - [x] Error monitoring
+  - [x] yfinance call success rate
 
 #### In Progress
 **prometheus stuff**
-  - [x] yfinance call success rate
-  - [ ] response status tracking
-  - [ ] yfinance error response details
+- [ ] response status tracking
+- [ ] yfinance error response details
 
 **grafana**
 - [ ] literally all of grafana

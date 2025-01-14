@@ -6,34 +6,32 @@ A real-time observability platform that monitors and analyzes requests to the YF
 - Real-time and historical stock data via YFinance
 - Prometheus metrics for monitoring API performance
 - FastAPI backend with built-in API docs
-- ~~Grafana dashboards for data visualization~~ wrapping up  
+- Grafana dashboards for data visualization
 - Containerized architecture with Docker
 
 ## Current Implementation and Local Setup Instructions
-
-Since each service (the fastAPI server responsible for making requests to the yFinance api, and the prometheus service responsible for scraping metrics used for monitoring querying) is deployed as a Docker container, you need to build both containers using Docker Compose. 
-
 ### Running FastAPI and Prometheus Together
 1. Start Docker Desktop
-2. Navigate to the `backend/` from root:
-
-And then run:
+2. Navigate to the backend directory and run both services:
 ```bash
+cd backend/
 docker-compose up --build
 ```
 
-This will build Docker images for both images and start containers for both services. Once you run that, you should see an output like this:
+You should see something like this:
 
 <img width="703" alt="docker_compose_build_output" src="screenshots/docker_compose_build_output.png" />
 
-The outputs logs just show the build process of both containers. `api-1` and `prometheus-1` refers to each, and 'attached' means they're both running (you can see that because it says `uvicorn` is running to listen to requests for made to our FastAPI server at the top for `api-1`, and the `Server is ready to recieve web requests` for `prom-1` at the bottom).
+The output logs show both containers building and attaching. You can tell everything's running properly because:
+- `api-1`: Shows uvicorn running on port 8000, which means our FastAPI server is up and ready to handle requests
+- `prometheus-1`: Shows `200 OK` responses from `/metrics` endpoint, meaning it's successfully scraping metrics from our FastAPI server (you'll also see the default "Server is ready to receive web requests" message indicating the Prometheus web UI is accessible)
 
+**Once running, you can access either service locally at:**
 - FastAPI: http://localhost:8000
 - Prometheus: http://localhost:9090
 
 ### Creating API Traffic for Prometheus Metrics
-
-To see this in action, use this bash script I wrote to generate some traffic hammer the YFinance API by with a bunch of curl requests. [Run this locally after both containers are running](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/endpoints_testing.sh)
+I wrote a script to generate some traffic for the FastAPI service to hammer the YFinance API by sending a bunch of curl requests. [Run this locally after both containers are running](https://github.com/shahjacobb/Market-Data-API-Observability-Platform/blob/main/backend/endpoints_testing.sh)
 
 Since both services are running, Prometheus will just automatically scrape the instrumented metrics from these requests at 5 second intervals.
 
@@ -87,7 +85,6 @@ curl http://localhost:8000/stock/AAPL/price | jq '.' && echo -e "\n" && curl htt
 ```
 
 Response from endpoints:
-
 <img width="650" alt="endpoints_responses" src="https://github.com/user-attachments/assets/25248dff-d54d-4484-beba-5a05f59c3a0a" />
 
 Shows the price data for AAPL and MSFT, and historical data for GOOGL (with customizable time intervals).
@@ -112,7 +109,7 @@ market_data_requests_total
 ```
 
 Total requests by endpoint:
-<img width="1454" alt="market_request_data_prom" src="screenshots/market_request_data_prom.png" />
+<img width="1454" alt="market_request_data_prom" src="https://github.com/user-attachments/assets/60d22cb5-e07e-4109-8c53-b5864029cd00" />
 
 The graph breaks down API usage - you can see the mix of price lookups, historical data pulls, and info requests.
 
@@ -124,8 +121,7 @@ stock_symbol_requests_total
 ```
 
 Request count by symbol:
-
-<img width="1400" alt="ticker_requests_counter_prom" src="screenshots/ticker_requests_counter_prom.png" />
+<img width="1451" alt="ticker_requests_counter_prom" src="https://github.com/user-attachments/assets/603e1e28-0c86-4615-b668-1053b490bfd2" />
 
 Shows request volume per stock symbol over time (AAPL, GOOGL, MSFT).
 
@@ -148,9 +144,7 @@ Shows request volume per stock symbol over time (AAPL, GOOGL, MSFT).
   - [x] yfinance call success rate
 
 #### In Progress
-**prometheus stuff**
-- [ ] response status tracking
-- [ ] yfinance error response details
+
 
 **grafana**
 - [ ] literally all of grafana

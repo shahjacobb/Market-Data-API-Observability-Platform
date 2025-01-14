@@ -11,13 +11,13 @@ A real-time observability platform that monitors and analyzes requests to the YF
 
 ## Current Implementation and Local Setup Instructions
 
-Since each service (the fastAPI server responsible for making requests to yfinance api, and the prometheus service responsible for scraping metrics used for monitoring querying) is deployed as a Docker container, you need to build both containers using Docker Compose. 
+Since each service (the fastAPI server responsible for making requests to the yFinance api, and the prometheus service responsible for scraping metrics used for monitoring querying) is deployed as a Docker container, you need to build both containers using Docker Compose. 
 
 ### Running FastAPI and Prometheus Together
 1. Start Docker Desktop
 2. Navigate to the `backend/` from root:
 
-And then runL
+And then run:
 ```bash
 docker-compose up --build
 ```
